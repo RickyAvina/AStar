@@ -27,7 +27,7 @@ public class AStar : MonoBehaviour
     void Start()
     {
         initializeNodes();  // Init nodes with default values
-        //findPath();
+        findPath();
     }
 
     public void findPath()
@@ -38,17 +38,27 @@ public class AStar : MonoBehaviour
             openNodes.Remove(currentNode);
             closedNodes.Add(currentNode);   // Node has already been explored
 
-            if (currentNode == goalNode)    // path has been found
+            if (currentNode.nodeNumber == goalNode.nodeNumber)    // path has been found
             {
+                Debug.Log("We've reached the end!");
                 return;
             }
 
+            Debug.Log($"Num neighbors: {currentNode.neighbors.Count}");
             for (int i = 0; i < currentNode.neighbors.Count; i++)
             {
                 if (!currentNode.neighbors[i].isObstacle && !inClosedSet(currentNode.neighbors[i]))   // make sure neighbors aren't obstacle and haven't been explored yet
                 {
                     // calculate g,h,f values for nodes
-                    currentNode.neighbors[i].gCost = currentNode.gCost + costToTravelToNode(currentNode.neighbors[i], currentNode);
+                    // currentNode.neighbors[i].gCost = currentNode.gCost + costToTravelToNode(currentNode.neighbors[i], currentNode);
+                    //Debug.Log(currentNode.neighbors[i].parent);
+
+                    if (currentNode.neighbors[i].parent == null || pathIsShorter(currentNode, currentNode.neighbors[i].parent)) {    // parent neighbor node to current node if current node doesn't have a parent or if the current node provides a better path than their current parent
+                        currentNode.neighbors[i].parent = currentNode;  // set parent
+                        Debug.Log("New parent set!");
+                    }
+                    
+                    Debug.Log($"Gcost for neighbor {i}: {currentNode.neighbors[i].gCost}");
                     // set parents of nodes 
                     // check if the movement cost from neighbor node back to origin is smaller
                     //if (new path to neighbor is shorter OR !inOpenSet(currentNode.neighbors[i])) {
@@ -59,6 +69,20 @@ public class AStar : MonoBehaviour
         }
     }
 
+    private bool pathIsShorter(Node n1, Node n2)
+    {
+        return calculatePathCost(n1) > calculatePathCost(n2);
+    }
+
+    private int calculatePathCost(Node node, int cost=0)
+    {
+        if (node.parent == null)
+        {
+            return cost;
+        }
+
+        return calculatePathCost(node.parent, cost + costToTravelToNode(node, node.parent));
+    }
 
     //private int pathToNeighbor(Node currentNode, Node neighborNode, int totalCost = 0)
     //{
@@ -77,7 +101,6 @@ public class AStar : MonoBehaviour
 
     private int costToTravelToNode(Node currentNode, Node parentNode)   // currentNode can be though as the neighbor
     {
- 
         return Convert.ToInt32(10*Math.Sqrt(Math.Pow(currentNode.y - parentNode.y, 2) + Math.Pow(currentNode.x - parentNode.x, 2)));
     }
 

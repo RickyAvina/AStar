@@ -2,10 +2,12 @@
 
 internal class Node
 {
-    int nodeNumber;
+    public int nodeNumber;
     public int x;  // x pos in grid
     public int y;  // y pos in grid
     public int gCost;
+
+
     int hCost;
     public bool isObstacle = false;
     public int fCost;
@@ -21,23 +23,23 @@ internal class Node
         this.x = x;
         this.y = y;
         neighbors = new List<Node>();   // neighbors will be of varied list for every Node
+        parent = null;
         //this.hValue = hValue;
     }
 
-    public static bool operator ==(Node n1, Node n2)
-    {
-        return n1.nodeNumber == n2.nodeNumber;
-    }
+    //public static bool operator ==(Node n1, Node n2)
+    //{
+    //    if (n1 == null || n2 == null){
+    //        return false;
+    //    }
 
-    public static bool operator !=(Node n1, Node n2)
-    {
-        return n1.nodeNumber != n2.nodeNumber;
-    }
+    //    return n1.nodeNumber == n2.nodeNumber;
+    //}
 
-    public override bool Equals(object obj)
-    {
-        return base.Equals(obj);
-    }
+    //public static bool operator !=(Node n1, Node n2)
+    //{
+    //    return n1.nodeNumber != n2.nodeNumber;
+    //}
 
     public override int GetHashCode()
     {
