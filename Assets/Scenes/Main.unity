@@ -144,8 +144,8 @@ MonoBehaviour:
   n: 10
   startingX: 0
   startingY: 0
-  goalX: 6
-  goalY: 7
+  goalX: 8
+  goalY: 9
 --- !u!4 &80335580
 Transform:
   m_ObjectHideFlags: 0

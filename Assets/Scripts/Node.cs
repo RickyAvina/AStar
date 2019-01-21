@@ -15,7 +15,6 @@ internal class Node
         }
         set
         {
-            fCost = value;
         }
     }
     public Node parent;
@@ -29,24 +28,10 @@ internal class Node
         this.nodeNumber = nodeNumber;
         this.x = x;
         this.y = y;
-        neighbors = new List<Node>();   // neighbors will be of varied list for every Node
+        neighbors = new List<Node>();   // neighbors will be of varied size for every Node
         parent = null;
         //this.hValue = hValue;
     }
-
-    //public static bool operator ==(Node n1, Node n2)
-    //{
-    //    if (n1 == null || n2 == null){
-    //        return false;
-    //    }
-
-    //    return n1.nodeNumber == n2.nodeNumber;
-    //}
-
-    //public static bool operator !=(Node n1, Node n2)
-    //{
-    //    return n1.nodeNumber != n2.nodeNumber;
-    //}
 
     public override int GetHashCode()
     {
@@ -55,6 +40,6 @@ internal class Node
 
     public override string ToString()
     {
-        return $"Node {nodeNumber}";
+        return $"Node {nodeNumber} ({x}, {y})";
     }
 }

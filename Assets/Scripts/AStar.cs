@@ -23,6 +23,8 @@ public class AStar : MonoBehaviour
     List<Node> closedNodes; // List of nodes that have already been evaluated
 
     private Node currentNode;   // used for tracking in loop
+    List<Node> path;            // the final path
+
 
     void Start()
     {
@@ -40,32 +42,29 @@ public class AStar : MonoBehaviour
 
             if (currentNode.nodeNumber == goalNode.nodeNumber)    // path has been found
             {
-                Debug.Log("We've reached the end!");
+                Debug.Log($"We've reached the end at node {currentNode.nodeNumber}\nat pos ({currentNode.x},{currentNode.y})!");
+                path = new List<Node>();
+                path = getPath(currentNode, path);
+                printPath(path);
                 return;
             }
 
-            Debug.Log($"Num neighbors: {currentNode.neighbors.Count}");
+            //Debug.Log($"Num neighbors: {currentNode.neighbors.Count}");
             for (int i = 0; i < currentNode.neighbors.Count; i++)
             {
                 if (!currentNode.neighbors[i].isObstacle && !inClosedSet(currentNode.neighbors[i]))   // make sure neighbors aren't obstacle and haven't been explored yet
                 {
-                    // calculate g,h values for nodes
-                    //currentNode.neighbors[i].gCost = currentNode.gCost + costToTravelToNode(currentNode.neighbors[i], currentNode);
-                    
-                    //Debug.Log(currentNode.neighbors[i].parent);
+                    //  || !inOpenSet(currentNode.neighbors[i])
 
-                    if (currentNode.neighbors[i].parent == null || pathIsShorter(currentNode, currentNode.neighbors[i].parent) || !inOpenSet(currentNode.neighbors[i])) {    // parent neighbor node to current node if current node doesn't have a parent or if the current node provides a better path than their current parent
-                        // set fcost of neighbor
+                    if (currentNode.neighbors[i].parent == null || pathIsShorter(currentNode, currentNode.neighbors[i].parent)) {    // parent neighbor node to current node if current node doesn't have a parent or if the current node provides a better path than their current parent
+                        // set fcost of neighbor, for now, we precompute fcost, so there's no need
                         currentNode.neighbors[i].parent = currentNode;  // set parent
-                        Debug.Log("New parent set!");
-                    }
-                    
-                  //  Debug.Log($"Gcost for neighbor {i}: {currentNode.neighbors[i].gCost}");
-                    // set parents of nodes 
-                    // check if the movement cost from neighbor node back to origin is smaller
-                    //if (new path to neighbor is shorter OR !inOpenSet(currentNode.neighbors[i])) {
 
-                    //}
+                        if (!inOpenSet(currentNode.neighbors[i]))
+                        {
+                            openNodes.Add(currentNode.neighbors[i]);
+                        }
+                    }
                 }
             }
         }
@@ -86,6 +85,29 @@ public class AStar : MonoBehaviour
     private bool pathIsShorter(Node n1, Node n2)
     {
         return calculatePathCost(n1) > calculatePathCost(n2);
+    }
+
+    private List<Node> getPath(Node node, List<Node> nodes)
+    {
+        if (node.parent == null)
+        {
+            return nodes;
+        }
+
+        nodes.Add(node);
+        return getPath(node.parent, nodes);
+    }
+
+    private void printPath(List<Node> nodes)
+    {
+        string _str = "";
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            _str += nodes[i].ToString() + "\n";
+            
+        }
+
+        print(_str);
     }
 
     private int calculatePathCost(Node node, int cost=0)
@@ -155,7 +177,7 @@ public class AStar : MonoBehaviour
         // initialize the starting Node and goal Nodes
         startNode = grid[startingX][startingY];
         startNode.gCost = 0;        // starting Node has a gCost of 0
-        startNode.fCost = 0;
+        //startNode.fCost = 0;
         openNodes.Add(startNode);  // add startingNOdes to openNodes for use in the first iteration of findPath
 
         goalNode = grid[goalX][goalY];          // keep reference to the goal node
