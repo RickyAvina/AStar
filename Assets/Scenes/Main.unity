@@ -142,10 +142,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   n: 10
+  D: 1
+  D2: 14
   startingX: 0
   startingY: 0
-  goalX: 8
-  goalY: 9
+  goalX: 4
+  goalY: 2
 --- !u!4 &80335580
 Transform:
   m_ObjectHideFlags: 0

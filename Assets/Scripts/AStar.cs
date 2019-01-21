@@ -9,6 +9,9 @@ public class AStar : MonoBehaviour
     [Tooltip("Resolution of the grid, ex: 10 will produce 10x10 grid")]
     public int n;
 
+    public double D = 1;
+    public double D2 = Math.Sqrt(2);
+
     [Tooltip("Coordinates of the startingNode")]
     public int startingX, startingY;
     [Tooltip("Coordinates of the goalNode")]
@@ -74,12 +77,16 @@ public class AStar : MonoBehaviour
     {
         // This is only an approximation, real distances can be calculated later if needed
         // Chebyshev distance - http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-        double D = 1;
-        double D2 = 1;
+        //double D = 1;
+        //double D2 = 1;
+
+        //double dx = Math.Abs(node.x - node2.x);
+        //double dy = Math.Abs(node.y - node2.x);
+        //return D * (dx + dy) + (D2 - 2 * D) * Math.Min(dx, dy);
 
         double dx = Math.Abs(node.x - node2.x);
-        double dy = Math.Abs(node.y - node2.x);
-        return D * (dx + dy) + (D2 - 2 * D) * Math.Min(dx, dy);
+        double dy = Math.Abs(node.y - node2.y);
+        return D * Math.Sqrt(dx * dx + dy * dy);
     }
 
     private bool pathIsShorter(Node n1, Node n2)
@@ -137,17 +144,8 @@ public class AStar : MonoBehaviour
 
     private int findNodeWithLowestFCost()
     {
-        double lowest = openNodes[0].fCost;
-        int index = 0;
-        for (int i = 0; i < openNodes.Count; i++)
-        {
-            if (openNodes[i].fCost < lowest)
-            {
-                lowest = openNodes[i].fCost;
-                index = i;
-            }
-        }
-        return index;
+        // finds neighbor nodes with lowest f cost then h cost if tied
+        return openNodes.IndexOf(openNodes.OrderBy(s => s.fCost).ThenBy(s => s.hCost).ToList()[0]);
     }
 
     void initializeNodes()
