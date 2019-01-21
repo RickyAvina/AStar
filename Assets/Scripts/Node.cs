@@ -5,12 +5,19 @@ internal class Node
     public int nodeNumber;
     public int x;  // x pos in grid
     public int y;  // y pos in grid
-    public int gCost;
-
-
-    int hCost;
+    public double gCost;    // distance from start node
+    public double hCost;     // distance from goal node
     public bool isObstacle = false;
-    public int fCost;
+
+    public double fCost {
+        get {
+            return gCost + hCost;
+        }
+        set
+        {
+            fCost = value;
+        }
+    }
     public Node parent;
     public List<Node> neighbors;   // Each neighbor has a GCOST (cost of moving there) and HCost (how far that node is from start) anf Fcost (G+H)
                             // These values are being recalculated every step

@@ -49,16 +49,18 @@ public class AStar : MonoBehaviour
             {
                 if (!currentNode.neighbors[i].isObstacle && !inClosedSet(currentNode.neighbors[i]))   // make sure neighbors aren't obstacle and haven't been explored yet
                 {
-                    // calculate g,h,f values for nodes
-                    // currentNode.neighbors[i].gCost = currentNode.gCost + costToTravelToNode(currentNode.neighbors[i], currentNode);
+                    // calculate g,h values for nodes
+                    //currentNode.neighbors[i].gCost = currentNode.gCost + costToTravelToNode(currentNode.neighbors[i], currentNode);
+                    
                     //Debug.Log(currentNode.neighbors[i].parent);
 
-                    if (currentNode.neighbors[i].parent == null || pathIsShorter(currentNode, currentNode.neighbors[i].parent)) {    // parent neighbor node to current node if current node doesn't have a parent or if the current node provides a better path than their current parent
+                    if (currentNode.neighbors[i].parent == null || pathIsShorter(currentNode, currentNode.neighbors[i].parent) || !inOpenSet(currentNode.neighbors[i])) {    // parent neighbor node to current node if current node doesn't have a parent or if the current node provides a better path than their current parent
+                        // set fcost of neighbor
                         currentNode.neighbors[i].parent = currentNode;  // set parent
                         Debug.Log("New parent set!");
                     }
                     
-                    Debug.Log($"Gcost for neighbor {i}: {currentNode.neighbors[i].gCost}");
+                  //  Debug.Log($"Gcost for neighbor {i}: {currentNode.neighbors[i].gCost}");
                     // set parents of nodes 
                     // check if the movement cost from neighbor node back to origin is smaller
                     //if (new path to neighbor is shorter OR !inOpenSet(currentNode.neighbors[i])) {
@@ -67,6 +69,18 @@ public class AStar : MonoBehaviour
                 }
             }
         }
+    }
+
+    private double calculateDist(Node node, Node node2)
+    {
+        // This is only an approximation, real distances can be calculated later if needed
+        // Chebyshev distance - http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+        double D = 1;
+        double D2 = 1;
+
+        double dx = Math.Abs(node.x - node2.x);
+        double dy = Math.Abs(node.y - node2.x);
+        return D * (dx + dy) + (D2 - 2 * D) * Math.Min(dx, dy);
     }
 
     private bool pathIsShorter(Node n1, Node n2)
@@ -83,21 +97,6 @@ public class AStar : MonoBehaviour
 
         return calculatePathCost(node.parent, cost + costToTravelToNode(node, node.parent));
     }
-
-    //private int pathToNeighbor(Node currentNode, Node neighborNode, int totalCost = 0)
-    //{
-    //    // go down gCost of traversing through neighbors
-    //    Node parent = currentNode.parent;
-
-    //    if (parent == null) {
-    //        return totalCost;
-    //    }
-    //    else {
-    //        totalCost += costToTravelToNode(currentNode, parentNode);
-
-    //        return 1;
-    //    }
-    //}
 
     private int costToTravelToNode(Node currentNode, Node parentNode)   // currentNode can be though as the neighbor
     {
@@ -116,7 +115,7 @@ public class AStar : MonoBehaviour
 
     private int findNodeWithLowestFCost()
     {
-        int lowest = openNodes[0].fCost;
+        double lowest = openNodes[0].fCost;
         int index = 0;
         for (int i = 0; i < openNodes.Count; i++)
         {
@@ -135,14 +134,18 @@ public class AStar : MonoBehaviour
         closedNodes = new List<Node>();
 
         int count = 0;
-        grid = new List<List<Node>>(n);
+        grid = new List<List<Node>>(n);     // Initializing the empty grid of nodes
+        startNode = new Node(-1, startingX, startingY);     // keep only a temporary reference to the start node to calculate h/g values for nodes
+        goalNode = new Node(-2, goalX, goalY);
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)                         
         {
             List<Node> temp = new List<Node>(n);
             for (int j = 0; j < n; j++)
             {
                 Node node = new Node(count, i, j);    // add Node with nodeNumber
+                node.gCost = calculateDist(node, startNode);   // distance from node to start
+                node.hCost = calculateDist(node, goalNode);
                 temp.Add(node);
                 count++;
             }
