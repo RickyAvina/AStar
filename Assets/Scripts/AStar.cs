@@ -76,13 +76,7 @@ public class AStar : MonoBehaviour
     private double calculateDist(Node node, Node node2)
     {
         // This is only an approximation, real distances can be calculated later if needed
-        // Chebyshev distance - http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-        //double D = 1;
-        //double D2 = 1;
-
-        //double dx = Math.Abs(node.x - node2.x);
-        //double dy = Math.Abs(node.y - node2.x);
-        //return D * (dx + dy) + (D2 - 2 * D) * Math.Min(dx, dy);
+        // Educlidean distance - http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 
         double dx = Math.Abs(node.x - node2.x);
         double dy = Math.Abs(node.y - node2.y);
